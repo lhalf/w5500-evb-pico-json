@@ -2,8 +2,8 @@
 #![no_main]
 
 mod board;
-mod echo;
 mod network;
+mod run;
 mod tasks;
 mod wiznet;
 
@@ -17,5 +17,5 @@ async fn main(spawner: Spawner) {
     let device = wiznet::init(&spawner, board).await;
     let stack = network::init(&spawner, device, seed).await;
 
-    echo::run(stack).await;
+    run::run(stack).await;
 }

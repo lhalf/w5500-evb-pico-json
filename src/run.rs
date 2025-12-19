@@ -1,6 +1,6 @@
 use embassy_net::Stack;
 use embassy_net::udp::{PacketMetadata, UdpSocket};
-use w5500_json::handle_packet;
+use w5500_json::core::relay::relay;
 
 pub async fn run(stack: Stack<'static>) -> ! {
     let mut rx_buf = [0; 4096];
@@ -14,6 +14,6 @@ pub async fn run(stack: Stack<'static>) -> ! {
     socket.bind(1234).unwrap();
 
     loop {
-        handle_packet(&socket, &mut buffer).await;
+        relay(&socket, &mut buffer).await;
     }
 }
