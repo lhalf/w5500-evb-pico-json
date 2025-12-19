@@ -3,14 +3,15 @@ use embassy_net::udp::{RecvError, SendError, UdpMetadata, UdpSocket};
 
 #[cfg_attr(test, autospy::autospy)]
 #[allow(async_fn_in_trait)]
-pub trait UdpIO {
-    async fn recv(&self, buffer: &mut [u8]) -> Result<(usize, UdpMetadata), RecvError>;
+pub trait UdpIO<'a> {
+    async fn recv(&self, buffer: &'a mut [u8]) -> Result<(&'a [u8], UdpMetadata), RecvError>;
     async fn send(&self, data: &[u8], metadata: UdpMetadata) -> Result<(), SendError>;
 }
 
-impl UdpIO for UdpSocket<'_> {
-    async fn recv(&self, buffer: &mut [u8]) -> Result<(usize, UdpMetadata), RecvError> {
-        self.recv_from(buffer).await
+impl<'a> UdpIO<'a> for UdpSocket<'_> {
+    async fn recv(&self, buffer: &'a mut [u8]) -> Result<(&'a [u8], UdpMetadata), RecvError> {
+        let (size, metadata) = self.recv_from(buffer).await?;
+        Ok((&buffer[..size], metadata))
     }
 
     async fn send(&self, data: &[u8], metadata: UdpMetadata) -> Result<(), SendError> {
