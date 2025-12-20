@@ -1,17 +1,16 @@
 use crate::hardware::error::Error;
 use crate::hardware::wiznet::Runner;
-use embassy_net::Stack;
+use embassy_net::udp::UdpSocket;
 use embassy_net_wiznet::Device;
 
 pub mod board;
 pub mod error;
 pub mod network;
-pub mod run;
 pub mod wiznet;
 
 pub async fn init() -> Result<
     (
-        Stack<'static>,
+        UdpSocket<'static>,
         Runner,
         embassy_net::Runner<'static, Device<'static>>,
     ),
@@ -23,7 +22,7 @@ pub async fn init() -> Result<
 
     let (device, ethernet_runner) = wiznet::init(board).await?;
 
-    let (stack, network_runner) = network::init(device, seed).await;
+    let (socket, network_runner) = network::init(device, seed).await?;
 
-    Ok((stack, ethernet_runner, network_runner))
+    Ok((socket, ethernet_runner, network_runner))
 }

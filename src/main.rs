@@ -4,20 +4,24 @@
 mod hardware;
 
 use embassy_executor::Spawner;
-use embassy_net::Stack;
+use embassy_net::udp::UdpSocket;
 use hardware::error::Error;
-use hardware::run;
 use hardware::wiznet;
 use panic_halt as _;
+use w5500_json::relay::relay;
 
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
-    let stack = setup(&spawner).await.unwrap();
-    run::run(stack).await;
+    let socket = setup(&spawner).await.unwrap();
+
+    let mut buffer = [0; 4096];
+    loop {
+        relay(&socket, &mut buffer).await;
+    }
 }
 
-async fn setup(spawner: &Spawner) -> Result<Stack<'static>, Error> {
-    let (stack, ethernet_runner, network_runner) = hardware::init().await?;
+async fn setup(spawner: &Spawner) -> Result<UdpSocket<'static>, Error> {
+    let (socket, ethernet_runner, network_runner) = hardware::init().await?;
 
     spawner
         .spawn(ethernet_task(ethernet_runner))
@@ -27,7 +31,7 @@ async fn setup(spawner: &Spawner) -> Result<Stack<'static>, Error> {
         .spawn(network_task(network_runner))
         .map_err(|_| Error::SpawnTask)?;
 
-    Ok(stack)
+    Ok(socket)
 }
 
 #[embassy_executor::task]
