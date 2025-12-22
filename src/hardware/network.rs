@@ -1,11 +1,8 @@
 use crate::hardware::error::Error;
 use embassy_net::udp::{PacketMetadata, UdpSocket};
-use embassy_net::{Ipv4Address, Ipv4Cidr, Stack, StackResources, StaticConfigV4};
+use embassy_net::{Ipv4Cidr, Stack, StackResources, StaticConfigV4};
 use static_cell::StaticCell;
-
-const IP_ADDRESS: Ipv4Cidr = Ipv4Cidr::new(Ipv4Address::new(192, 168, 50, 40), 24);
-const PORT: u16 = 1234;
-const GATEWAY: Ipv4Address = Ipv4Address::new(192, 168, 50, 1);
+use w5500_json::config::{GATEWAY, IP_ADDRESS, IP_ADDRESS_PREFIX, PORT};
 
 pub async fn init(
     device: embassy_net_wiznet::Device<'static>,
@@ -20,7 +17,7 @@ pub async fn init(
     static RESOURCES: StaticCell<StackResources<3>> = StaticCell::new();
 
     let config = embassy_net::Config::ipv4_static(StaticConfigV4 {
-        address: IP_ADDRESS,
+        address: Ipv4Cidr::new(IP_ADDRESS, IP_ADDRESS_PREFIX),
         gateway: Some(GATEWAY),
         dns_servers: Default::default(),
     });
