@@ -22,10 +22,11 @@ async fn main(spawner: Spawner) {
         Err(_) => setup_error(led),
     };
 
-    let mut buffer = [0; 4096];
+    let mut rx_buffer = [0; 4096];
+    let mut tx_buffer = [0; 4096];
 
     loop {
-        relay(&socket, &mut buffer).await;
+        relay(&socket, &mut rx_buffer, &mut tx_buffer).await;
     }
 }
 
