@@ -1,4 +1,4 @@
-use std::net::{Ipv4Addr, UdpSocket};
+use std::net::UdpSocket;
 use std::sync::atomic::AtomicBool;
 use std::sync::mpsc;
 use std::sync::mpsc::Sender;
