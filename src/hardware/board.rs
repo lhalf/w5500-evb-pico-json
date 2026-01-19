@@ -6,7 +6,7 @@ use embassy_rp::{
     spi::Spi,
 };
 
-const SPI_FREQUENCY: u32 = 40_000_000;
+const SPI_FREQUENCY: u32 = 60_000_000;
 
 pub struct Board {
     pub spi: Spi<'static, embassy_rp::peripherals::SPI0, spi::Async>,

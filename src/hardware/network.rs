@@ -30,8 +30,8 @@ pub async fn init(
 }
 
 fn setup_socket(stack: Stack<'static>) -> Result<RawSocket<'static>, Error> {
-    const RX_BUFFER_SIZE: usize = 64 * 1024;
-    const TX_BUFFER_SIZE: usize = 32 * 1024;
+    const RX_BUFFER_SIZE: usize = 16 * 1024;
+    const TX_BUFFER_SIZE: usize = 16 * 1024;
     const META_SIZE: usize = 256;
 
     static RX_BUF: StaticCell<[u8; RX_BUFFER_SIZE]> = StaticCell::new();
